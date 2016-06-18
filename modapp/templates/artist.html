@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+    {% load total_extras %}
+    <head>
+        <title>Viewing artist</title>
+        <!-- Bootstrap base CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <!-- Bootstrap right to left -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.2.0-rc2/css/bootstrap-rtl.min.css">
+        <!-- Bootstrap theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+        <!-- Bootstrap JS -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <!-- Font Awesome -->
+        <script src="https://use.fontawesome.com/7a6bd2f46b.js"></script>
+		<script>
+			var map;
+			var initialized = false;
+			function initMap() {
+				map = new google.maps.Map(document.getElementById('map'), {
+					center: {lat: 0, lng: 0},
+					zoom: 14
+				});
+				console.log("Loaded map")
+				var geocoder = new google.maps.Geocoder();
+				geocodeAddress(geocoder, map);
+				initialized = true;
+			}
+			
+			function geocodeAddress(geocoder, resultsMap) {
+				var address = "{{ artist.location|escape }}";
+				geocoder.geocode({
+					'address': address
+				}, function(results, status) {
+					if (status === google.maps.GeocoderStatus.OK) {
+						resultsMap.setCenter(results[0].geometry.location);
+						var marker = new google.maps.Marker({
+							map: resultsMap,
+							position: results[0].geometry.location
+						});
+					} else {
+						alert('Geocode was not successful for the following reason: ' + status);
+					}
+				});
+			}
+			
+			$(document).ready(function() {
+				$("#captionLocation").click(function() {
+					if (!initialized) {
+						initMap();
+					}
+				});
+			});
+		</script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="jumbotron">
+                <h2>{{ artist.name }}</h2>
+                <div class="pull-left">
+                    <button class="btn btn-lg btn-primary">
+                        צור קשר
+                        <i class="fa fa-send" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <h3>{{ artist.short_desc }}</h3>
+            </div>
+            <div class="row h4">
+                <div class="col-xs-6">
+                    <i class="fa fa-road" aria-hidden="true"></i> עד {{ artist.max_dist }} ק"מ
+                </div>
+                <div class="col-xs-6">
+                    <i class="fa fa-money" aria-hidden="true"></i> החל מ-{{ artist.min_price|format_nis }}
+                </div>
+            </div>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="bio">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBio" aria-expanded="true" aria-controls="collapseBio">
+                                ביוגרפיה
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseBio" class="panel-collapse collapse" role="tabpanel" aria-labelledby="bio">
+                        <div class="panel-body">
+                            {{ artist.long_desc|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="rep">
+                        <h4 class="panel-title">
+                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseRep" aria-expanded="true" aria-controls="collapseRep">
+                                רפרטואר
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseRep" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rep">
+                        <div class="panel-body">
+                            {{ artist.repertoire|linebreaks }}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="loc">
+                        <h4 class="panel-title">
+                            <a id="captionLocation" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLoc" aria-expanded="true" aria-controls="collapseLoc">
+                                מיקום
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseLoc" class="panel-collapse collapse" role="tabpanel" aria-labelledby="loc">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-xs-6" style="height: 250px;">
+									<div id="map" style="height: 250px;"></div>
+									<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmZuNIsIbG1Jah3Cywf1MUlNAgTwCZZXo" async defer></script>
+                                </div>
+								<div class="col-xs-6">
+									<p><i class="fa fa-map-marker" aria-hidden="true"></i> מיקום: {{ artist.location }}</p>
+									<p>
+										<i class="fa fa-road" aria-hidden="true"></i> מרחק נסיעה מקסימלי: {{ artist.max_dist }} ק"מ<br />
+										(עד {{ artist.max_dist_inc }} ק"מ ללא תשלום נוסף)
+									</p>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
