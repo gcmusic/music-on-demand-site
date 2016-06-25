@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     {% load total_extras %}
+    {% load static %}
     <head>
         <title>Viewing artist</title>
         <!-- Bootstrap base CSS -->
@@ -15,6 +16,9 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
         <!-- Font Awesome -->
         <script src="https://use.fontawesome.com/7a6bd2f46b.js"></script>
+        <!-- Rating -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/star-rating-svg.css' %}">
+        <script src="{% static 'js/jquery.star-rating-svg.js' %}"></script>
 		<script>
 			var map;
 			var initialized = false;
@@ -52,6 +56,13 @@
 						initMap();
 					}
 				});
+                
+                $("#rating").starRating({
+                    starSize: 25,
+                    callback: function(currentRating, $el) {
+                        alert(currentRating);
+                    }
+                });
 			});
 		</script>
     </head>
@@ -135,7 +146,17 @@
                 </div>
             </div>
             <!-- Reviews -->
-            
+            <div class="row">
+                <div class="col-sm-8">
+                    <h2>תגובות</h2>
+                </div>
+                <div class="col-sm-4 panel panel-default">
+                    <h2>דירוגים</h2>
+                    <div id="rating" dir="ltr">
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
