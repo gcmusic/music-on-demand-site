@@ -59,12 +59,13 @@
                 
                 function updateRatings(data) {
                     message = "";
+                    average = data.average.toFixed(1);
                     if (data.ratings === 0) {
                         message = "אין דירוגים. תנו את הדירוג הראשון!";
                     } else if (data.ratings === 1) {
-                        message = data.average + " כוכבים מדירוג אחד";
+                        message = average + " כוכבים מדירוג אחד";
                     } else {
-                        message = data.average + " כוכבים מ-" + data.ratings + " דירוגים";
+                        message = average + " כוכבים מ-" + data.ratings + " דירוגים";
                     }
                     $("#total-ratings").html(message);
                 }
