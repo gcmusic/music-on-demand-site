@@ -57,12 +57,32 @@
 					}
 				});
                 
+                function updateRatings(data) {
+                    message = "";
+                    if (data.ratings === 0) {
+                        message = "אין דירוגים. תנו את הדירוג הראשון!";
+                    } else if (data.ratings === 1) {
+                        message = data.average + " כוכבים מדירוג אחד";
+                    } else {
+                        message = data.average + " כוכבים מ-" + data.ratings + " דירוגים";
+                    }
+                    $("#total-ratings").html(message);
+                }
+                
                 $("#rating").starRating({
                     starSize: 25,
                     callback: function(currentRating, $el) {
-                        alert(currentRating);
+                        $.get("/api/rate/{{ artist.id }}/" + currentRating)
+                            .done(function(data) {
+                                if (data.status === "added") {
+                                    updateRatings(data);
+                                }
+                            });
                     }
                 });
+                
+                $.get("/api/rate/{{ artist.id }}")
+                    .done(updateRatings);
 			});
 		</script>
     </head>
@@ -152,9 +172,8 @@
                 </div>
                 <div class="col-sm-4 panel panel-default">
                     <h2>דירוגים</h2>
-                    <div id="rating" dir="ltr">
-                        
-                    </div>
+                    <div id="rating" dir="ltr"></div>
+                    <div id="total-ratings"></div>
                 </div>
             </div>
         </div>
