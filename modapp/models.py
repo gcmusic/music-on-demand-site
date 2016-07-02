@@ -48,3 +48,7 @@ class Rating(models.Model):
     """
     ip = models.CharField(max_length=36)
     value = models.FloatField()
+    artist_id = models.IntegerField()
+
+    def __str__(self):
+        return "<%s, %.1f, %d>" % (self.ip, self.value, self.artist_id)

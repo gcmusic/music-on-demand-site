@@ -77,6 +77,8 @@
                             .done(function(data) {
                                 if (data.status === "added") {
                                     updateRatings(data);
+                                } else if (data.status === "already_exists") {
+                                    alert("כבר דירגת את האמן הזה");
                                 }
                             });
                     }

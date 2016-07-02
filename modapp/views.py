@@ -52,22 +52,32 @@ def view_rating(request, artist_id):
 
 def rate(request, artist_id, value):
     """
-    Adds a rating on an artist.
+    Adds a rating to an artist.
     """
-    artist = who_is(artist_id)
-    
+    ip = request.META["REMOTE_ADDR"]
     value = float(value)
     
-    rating = Rating(ip="n/a", value=value)
-    rating.save()
+    status = ""
     
-    artist.total_stars += value
-    artist.ratings += 1
-    artist.save()
+    matching = Rating.objects.all().filter(ip=ip, artist_id=artist_id)
+    if len(matching) > 0:
+        status = "already_exists"
+    else:    
+        rating = Rating(ip=ip, value=value, artist_id=artist_id)
+        rating.save()
+
+        artist = who_is(artist_id)
+
+        artist.total_stars += value
+        artist.ratings += 1
+        artist.save()
+
+        status = "added"
     
     result = {
-        "status": "added",
+        "status": status,
         "value": value,
+        "ip": ip,
         "artist_id": artist_id,
         "average": artist.total_stars / artist.ratings,
         "ratings": artist.ratings
