@@ -6,6 +6,13 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    
+class Subcategory(models.Model):
+    name = models.CharField(max_length=96)
+    
+    def __str__(self):
+        return self.name
 
 
 class Artist(models.Model):
@@ -37,6 +44,9 @@ class Artist(models.Model):
     # Ratings
     ratings = models.IntegerField()
     total_stars = models.FloatField()
+    
+    # Photo
+    filename = models.CharField(max_length=128, blank=True)
 
     def __str__(self):
         return self.name
