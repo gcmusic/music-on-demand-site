@@ -268,7 +268,7 @@
                             <div class="review">
                                 <h4>
                                     <div>{{ review.subject }}</div>
-                                    <div><small>{{ review.sender }} בתאריך {{ review.date|time }}</small></div>
+                                    <div><small>{{ review.sender }} לפני {{ review.submit_date|timesince }}</small></div>
                                 </h4>
                                 <div>
                                     {{ review.body|linebreaks }}
