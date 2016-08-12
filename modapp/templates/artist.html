@@ -27,14 +27,14 @@
 					center: {lat: 0, lng: 0},
 					zoom: 14
 				});
-				console.log("Loaded map")
+				console.log('Loaded map')
 				var geocoder = new google.maps.Geocoder();
 				geocodeAddress(geocoder, map);
 				initialized = true;
 			}
 			
 			function geocodeAddress(geocoder, resultsMap) {
-                var address = "{{ artist.location|escape }}";
+                var address = '{{ artist.location|escape }}';
 				geocoder.geocode({
 					'address': address
 				}, function(results, status) {
@@ -51,40 +51,83 @@
 			}
 			
 			$(document).ready(function() {
-				$("#captionLocation").click(function() {
+                // Configure AJAX HTTP requests to include CSRF protection.
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                var csrftoken = getCookie('csrftoken');
+
+                function csrfSafeMethod(method) {
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+
+                $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+                        }
+                    }
+                });
+                
+                // Initializes the map upon request
+				$('#captionLocation').click(function() {
 					if (!initialized) {
 						initMap();
 					}
 				});
                 
+                // Updates the ratings from the DB
                 function updateRatings(data) {
-                    message = "";
+                    message = '';
                     average = data.average.toFixed(1);
                     if (data.ratings === 0) {
-                        message = "אין דירוגים. תנו את הדירוג הראשון!";
+                        message = 'אין דירוגים. תנו את הדירוג הראשון!';
                     } else if (data.ratings === 1) {
-                        message = average + " כוכבים מדירוג אחד";
+                        message = average + ' כוכבים מדירוג אחד';
                     } else {
-                        message = average + " כוכבים מ-" + data.ratings + " דירוגים";
+                        message = average + ' כוכבים מ-' + data.ratings + ' דירוגים';
                     }
-                    $("#total-ratings").html(message);
+                    $('#total-ratings').html(message);
                 }
                 
-                $("#rating").starRating({
+                // Handles rating submission
+                $('#rating').starRating({
                     starSize: 25,
                     callback: function(currentRating, $el) {
-                        $.get("/api/rate/{{ artist.id }}/" + currentRating)
+                        $.get('/api/rate/{{ artist.id }}/' + currentRating)
                             .done(function(data) {
-                                if (data.status === "added") {
+                                if (data.status === 'added') {
                                     updateRatings(data);
-                                } else if (data.status === "already_exists") {
-                                    alert("כבר דירגת את האמן הזה");
+                                } else if (data.status === 'already_exists') {
+                                    alert('כבר דירגת את האמן הזה');
                                 }
                             });
                     }
                 });
                 
-                $.get("/api/rate/{{ artist.id }}")
+                $('#submitReview').click(function () {
+                    var review = {};
+                    review.sender = $('#reviewSender').val();
+                    review.subject = $('#reviewSubject').val();
+                    review.body = $('#reviewBody').val();
+                    $.post('/api/review/{{ artist.id }}/', review, function (data) {
+                        console.log(data);
+                    });
+                });
+                
+                $.get('/api/rate/{{ artist.id }}')
                     .done(updateRatings);
 			});
 		</script>
@@ -196,6 +239,45 @@
             <div class="row">
                 <div class="col-sm-8">
                     <h2>תגובות</h2>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            שליחת תגובה
+                        </div>
+                        <div class="panel-body">
+                            <form role="form">
+                                <div class="form-group">
+                                    <label for="reviewSender">שם</label>
+                                    <input type="text" id="reviewSender" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="reviewSubject">נושא</label>
+                                    <input type="text" id="reviewSubject" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="reviewBody">תגובה</label>
+                                    <textarea id="reviewBody" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group text-left">
+                                    <button type="button" class="btn btn-primary" id="submitReview">הוסף תגובה</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% if reviews %}
+                        {% for review in reviews %}
+                            <div class="review">
+                                <h4>
+                                    <div>{{ review.subject }}</div>
+                                    <div><small>{{ review.sender }} בתאריך {{ review.date|time }}</small></div>
+                                </h4>
+                                <div>
+                                    {{ review.body|linebreaks }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        אין תגובות. הוסיפו את התגובה הראשונה!
+                    {% endif %}
                 </div>
                 <div class="col-sm-4 panel panel-default">
                     <h2>דירוגים</h2>

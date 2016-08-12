@@ -20,7 +20,7 @@ class Artist(models.Model):
     Represents an artist or musical act.
     """
     name = models.CharField(max_length=128)
-    reg_date = models.DateTimeField("Date registered")
+    reg_date = models.DateTimeField('Date registered')
     url = models.CharField(max_length=32)
     website = models.CharField(max_length=256, blank=True)
     
@@ -61,4 +61,18 @@ class Rating(models.Model):
     artist_id = models.IntegerField()
 
     def __str__(self):
-        return "<%s, %.1f, %d>" % (self.ip, self.value, self.artist_id)
+        return '<%s, %.1f, #%d>' % (self.ip, self.value, self.artist_id)
+    
+
+class Review(models.Model):
+    """
+    Represents a review on an artist/band.
+    """
+    sender = models.CharField(max_length=128)
+    subject = models.CharField(max_length=128)
+    body = models.TextField()
+    submit_date = models.DateTimeField('Date submitted')
+    artist_id = models.IntegerField()
+    
+    def __str__(self):
+        return '<Review from %s on #%d>' % (self.sender, self.artist_id)
