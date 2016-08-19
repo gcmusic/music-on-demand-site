@@ -1,0 +1,49 @@
+#artistPhoto {
+    background-size: auto;
+}
+
+#artistHeading {
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0) 30%);
+    padding-top: 60px;
+    padding-bottom: 80px;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
+}
+
+#artistHeading h1 {
+    font-size: 330%;
+}
+
+.form-control {
+    border-radius: 0;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08) inset;
+}
+
+.btn {
+    border-radius: 0;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+    transition-duration: 0.1s;
+}
+
+.btn-link {
+    box-shadow: none;
+}
+
+.btn-primary, .btn-primary:focus {
+    background-color: #e06125;
+    border-color: #a3532e;
+}
+
+.btn-primary:hover {
+    background-color: #ef7b44;
+    border-color: #743a20;
+}
+
+.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover {
+    background-color: #bb4d18;
+    border-color: #402012;
+}
+
+.navbar {
+    margin-bottom: 0;
+}
