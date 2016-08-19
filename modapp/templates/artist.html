@@ -88,6 +88,12 @@
 					}
 				});
                 
+                // Enable tabbable areas
+                $('#infoTabs a').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+                
                 // Updates the ratings from the DB
                 function updateRatings(data) {
                     message = '';
@@ -183,59 +189,31 @@
                     <i class="fa fa-money" aria-hidden="true"></i> החל מ-{{ artist.min_price|format_nis }}
                 </div>
             </div>
-            <!-- Accordion -->
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="bio">
-                        <h4 class="panel-title">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseBio" aria-expanded="true" aria-controls="collapseBio">
-                                ביוגרפיה
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseBio" class="panel-collapse collapse" role="tabpanel" aria-labelledby="bio">
-                        <div class="panel-body">
-                            {{ artist.long_desc|linebreaks }}
-                        </div>
-                    </div>
+            <!-- Info tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#bio" aria-controls="bio" role="tab" data-toggle="tab">ביוגרפיה</a></li>
+                <li role="presentation"><a href="#repertoire" aria-controls="repertoire" role="tab" data-toggle="tab">רפרטואר</a></li>
+                <li role="presentation"><a href="#location" aria-controls="location" role="tab" data-toggle="tab" id="captionLocation">מיקום</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="bio" class="tab-pane active" role="tabpanel">
+                    {{ artist.long_desc|linebreaks }}
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="rep">
-                        <h4 class="panel-title">
-                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseRep" aria-expanded="true" aria-controls="collapseRep">
-                                רפרטואר
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseRep" class="panel-collapse collapse" role="tabpanel" aria-labelledby="rep">
-                        <div class="panel-body">
-                            {{ artist.repertoire|linebreaks }}
-                        </div>
-                    </div>
+                <div id="repertoire" class="tab-pane" role="tabpanel">
+                    {{ artist.repertoire|linebreaks }}
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading" role="tab" id="loc">
-                        <h4 class="panel-title">
-                            <a id="captionLocation" class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseLoc" aria-expanded="true" aria-controls="collapseLoc">
-                                מיקום
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseLoc" class="panel-collapse collapse" role="tabpanel" aria-labelledby="loc">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-xs-6" style="height: 250px;">
-									<div id="map" style="height: 250px;"></div>
-									<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmZuNIsIbG1Jah3Cywf1MUlNAgTwCZZXo" async defer></script>
-                                </div>
-								<div class="col-xs-6">
-									<p><i class="fa fa-map-marker" aria-hidden="true"></i> מיקום: {{ artist.location }}</p>
-									<p>
-										<i class="fa fa-road" aria-hidden="true"></i> מרחק נסיעה מקסימלי: {{ artist.max_dist }} ק"מ<br />
-										(עד {{ artist.max_dist_inc }} ק"מ ללא תשלום נוסף)
-									</p>
-								</div>
-                            </div>
+                <div id="location" class="tab-pane" role="tabpanel">
+                    <div class="row">
+                        <div class="col-xs-6" style="height: 250px;">
+                            <div id="map" style="height: 250px;"></div>
+                            <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmZuNIsIbG1Jah3Cywf1MUlNAgTwCZZXo" async defer></script>
+                        </div>
+                        <div class="col-xs-6">
+                            <p>מיקום: {{ artist.location }}</p>
+                            <p>
+                                מרחק נסיעה מקסימלי: {{ artist.max_dist }} ק"מ<br />
+                                (עד {{ artist.max_dist_inc }} ק"מ ללא תשלום נוסף)
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -243,7 +221,9 @@
             <!-- Reviews -->
             <div class="row">
                 <div class="col-sm-8">
-                    <h2>תגובות</h2>
+                    <h2>
+                        תגובות
+                    </h2>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             שליחת תגובה
@@ -285,7 +265,9 @@
                     {% endif %}
                 </div>
                 <div class="col-sm-4 panel panel-default">
-                    <h2>דירוגים</h2>
+                    <h2>
+                        דירוגים
+                    </h2>
                     <div id="rating" dir="ltr"></div>
                     <div id="total-ratings"></div>
                 </div>
