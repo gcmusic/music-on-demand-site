@@ -136,22 +136,27 @@
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container-fluid">
                 <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mod-navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
                     <a class="navbar-brand" href="/">MusicOnDemand</a>
                 </div>
-                <ul class="nav navbar-nav">
-                    <li>
-                        <form class="navbar-form">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="חיפוש">
-                            </div>
-                            <button type="submit" class="btn btn-default">
-                                <span class="fa fa-search"></span>
-                            </button>
-                        </form>
-                    </li>
-                    <li><a href="#"><span class="fa fa-sign-in"></span> התחברות</a></li>
-                    <li><a href="#"><span class="fa fa-question-circle"></span> תמיכה</a></li>
-                </ul>
+                <div class="collapse navbar-collapse" id="mod-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#"><span class="fa fa-sign-in"></span> התחברות</a></li>
+                        <li><a href="#"><span class="fa fa-question-circle"></span> תמיכה</a></li>
+                    </ul>
+                    <form class="navbar-form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="חיפוש">
+                        </div>
+                        <button type="submit" class="btn btn-default">
+                            <span class="fa fa-search"></span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </nav>
         <div id="artistPhoto" style="background-image: url('/static/img/artists/{{artist.filename}}');">
